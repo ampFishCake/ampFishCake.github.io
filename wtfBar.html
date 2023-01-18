@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>诡异鸡尾酒</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            width: 500px;
+        }
+        .line {
+            border-width: 1px;
+            border-top-style:dashed;
+        }
+        .double-line {
+            border-width: 3px;
+            margin-top: 20px;
+            border-top-style:double;
+        }
+        .header {
+            border-width: 1px;
+            border-top-style:dashed;
+            border-bottom-style:dashed;
+        }
+        .recipe {
+            display: flex;
+        }
+        .recipe .ingredients {
+            width: 60vmin;
+            min-width: 150px;
+        }
+        .recipe .amount {
+            min-width: 50px;
+            margin-left: 60vmin+10px;
+        }
+    </style>
+</head>
+ 
+<body>
+    <h4>诡异鸡尾酒 - 您的线上乱调酒吧</h4>
+    <div style="font-size: 10px;">调制人生，改变饮料</div>
+    <div class="line"></div>
+    <div id="current-time"></div>
+    <div id="order-num"></div>
+    <div id="person-count"></div>
+    <div id="cashier"></div>
+    <div class="double-line"></div>
+    <h3 id="recipe-name"></h3>
+    <div style="font-size: 10px;">您真的要尝尝这个吗?</div>
+    <div class="header">
+        <div class="recipe">
+            <div class="ingredients">材料</div>
+            <div class="amount">数量</div>
+        </div>
+    </div>
+    <div class="recipe">
+        <div class="ingredients" id="ingredients"></div>
+        <div class="amount" id="amount"></div>
+    </div>
+    <div class="line"></div>
+    <div class="method">制作方法</div>
+    <div class="line"></div>
+    <div id="method">方法详情</div>
+    <div class="double-line"></div>
+    <div id="membership"></div>
+    <div class="double-line"></div>
+    <div>
+    本店不支持送货上门服务，请拿好小票到离您最近的酒吧付款品尝。如需换货请刷新页面，一旦退换不保证货品再次上架，请您再思而后行。
+    </div>
+    <div>
+    请妥善保管好您的小票，但它没有什么作用，不能开发票、退货或再次购买。
+    </div>
+    <div>
+    积分系统不存在，可以不用查询。
+    </div>
+    <div>
+    欢迎您再次光临！
+    </div>
+
+    <div style="font-size: 10px; margin-top: 40px;">
+    @ Labs系列实验 - 0xe3<br>
+    @ 执行人 - ▧▧▧▧▧▧<br>
+    @ 归档编号 - ▧▧▧▧▧▧▧▧▧▧▧
+    </div>
+</body>
+ 
+<script type="text/javascript">
+
+    const today = new Date();
+    const cashierType = ["195182763","Henry","金牛斗士","德林气泡水","竜之介","个人","刘德广","sa","admin","管理员","南京西路店","售后测试","T003"];
+
+    const personType = ["星际列车","昨晚十二点","在花盆里","吃鱼","向黎明突击","火箭炮","摄像头","中阮","黑色小飞虫"];
+
+    const name_part1 = ["兴奋","快乐","愉悦","焦虑","忧愁","哀伤","愤怒","纠结","抑郁","消极","疑虑","胆怯","紧张","放松","激动","苦闷","压抑","讽刺","惊喜","柔美","爽朗","平和","震惊","镇静","甜蜜","忐忑","温和","和蔼","苦涩","平淡","鲜美","诱人","独特","醇厚","甜美","香辣","油腻","清香","甜蜜","甘甜","浓香","松脆","糖分","辣椒","海盐","恶心","喷射","诚实","橡树","枫叶","静谧","奥术","感知","激战","建筑","无尽","月球","矿石","粉色","电击","极限","森林","秋季","刀锋"];
+    const name_part2 = ["摇滚","巨龙","水滴","繁荣","挤压","射线","大炮","日蚀","流星","家","荷花","地震","风暴","骑士","洞穴","波浪","耳语","飘香","耳光","车","日落","海滨","蒸汽","颤抖","酸","重击","愉悦","号角","喷射","2","II","III","3","IV","·改","乐章","小调","和弦","X","显卡","吊车","迷惑","诱惑","星尘","星辰","青蛙","蓬松","火焰","地平线","远哭","烤箱","测试","旅行","观察","搬运"];
+
+    const whisky = ["鹰牌10年","老祖父114","艾利加小批量","威廉罗伦古典风华","怀俄明威士忌","瑞顿房黑麦威士忌","罗素大师珍藏6年威士忌","田纳西酸麦芽威士忌","小麦威士忌","欧肯特轩 3 桶","波摩 12 年","格兰威特 12 年","高原骑士 12 年","拉弗格 10 年","康沛勃克司亚塞达","威雀","康沛勃克司橡木十字","布什米尔经典","知更鸟 12 年","白州 12 年","一甲科菲谷物威士忌","三得利季","芝华士 12 年","尊尼获加","Jim Beam","百龄坛12年","百龄坛特醇","Jameson 尊美醇 经典","Jameson 尊美醇 IPA 桶","三得利角牌","三得利老牌","Label 5","帝王白标 Dewar's","格兰三桶 Grant’s","格兰雪梨过桶 Grant's","威雀 The famous grouse","加拿大俱乐部 Canadian club","格兰威特 12 年","格兰菲迪 12 年","格兰杰 10 年","苏格登 12 年","百富 12 年","麦卡伦 12 年","格兰多纳 12 年","大摩 12 年","泰斯卡 10 年","阿贝 10 年","波摩 15 年"];
+
+    const vodka = ["绝对","绝对亦乐","雪树","一号机库"];
+
+    const brandy = ["轩尼诗 VS","保罗·博 VS","御鹿 VSOP","派克 VSOP","皮埃尔·费朗 1840","皮埃尔·费朗琥珀","塔希克经典 VS 下雅文邑","塔希克 VSOP 下雅文邑","埃斯帕杭斯酒庄白雅文邑","门多萨主教索莱拉珍藏","阿尔巴公爵索莱拉珍藏","卢士涛索莱拉赫雷斯白兰地","坎波·德·恩坎托特选皮斯科","卡普若·阿卡拉多皮斯科","马丘皮斯科","辛加尼 63","布斯奈奥日地区 VSOP","杜邦奥日地区珍藏","黑土苹果杰克","克利尔溪 2 年苹果白兰地","克利尔溪 8 年苹果白兰地","铜与国王防洪堤苹果白兰地","莱尔德 50% 纯苹果白兰地","莱尔德 44% 12年 苹果白兰地","克利尔溪梨子白兰地","玛斯尼威廉梨白兰地","克利尔溪樱桃白兰地","玛斯尼老樱桃白兰地","布鲁姆·玛瑞兰杏子白兰地","人头马 VSOP","马爹利","卡慕"];
+
+    const rum = ["百加得白朗姆酒","百加得黑朗姆酒","百加得金朗姆酒","百加得陈酿 8 年","巴巴多斯","摩根船黑金","哈瓦那 7 年","卡纳布兰瓦","富佳娜 4 年白朗姆酒","蔗园3星朗姆酒","高斯林黑海豹","隆德巴里利托 3 星","萨卡帕 23 年","杜兰朵白朗姆酒","克鲁赞黑糖蜜","蔗园传统高度黑朗姆酒","杜兰朵 15 年","乌雷叔侄高度白朗姆酒","汉密尔顿牙买加蒸馏罐金朗姆酒","汉密尔顿牙买加蒸馏罐黑朗姆酒","史密斯和克罗斯","阿普尔顿庄园珍藏","芭班库白朗姆酒","拉法沃瑞蔗心","J.M 牌 VSOP 朗姆酒","内森珍藏特选","阿弗阿银卡莎萨","诺沃佛哥银卡莎萨","阿弗阿良木桶卡莎萨"];
+
+    const tequila = ["西马隆银特其拉","普布罗·维乔银特其拉","席安布拉·阿祖尔银特其拉","西亚特·拉古阿斯银特其拉","西马隆微酿特其拉","唐·胡里奥珍藏金标","特索罗微酿特其拉","普布罗·维乔陈年特其拉","德尔玛盖维达","孤独圣母拉康帕尼亚-埃朱特拉","洛斯·阿曼特斯微酿梅斯卡尔"];
+
+    const gin = ["必富达伦敦干金酒","富兹金酒","普利茅斯","希普史密斯","添加利","飞行金酒","圣乔治·博坦尼金酒","泰瑞金酒","干黑麦金酒","季之美","猴王47","季之茶","六","添加利10号","巷贩小酒","过黑皮诺桶","植物学家","亨利爵士","普利茅斯","哥顿","必富达","孟买蓝宝石","卢布斯","季能美"];
+
+    const sweets = ["单糖浆","单糖浆","蜂蜜糖浆","单糖浆","蜂蜜糖浆","蜂蜜糖浆","单糖浆","单糖浆","苹果","桃子","单糖浆","单糖浆","单糖浆","甘蔗汁","红石榴糖浆"];
+
+    const sour = ["柠檬汁","青柠汁","柚子汁","西柚汁","橙汁","橙汁","橙汁","柠檬汁","青柠汁","柚子汁","西柚汁","柠檬果肉","青柠果肉","柚子果肉","西柚果肉","磷酸","柠檬酸","乳酸","苹果酸","酒石酸","维生素C"];
+
+    const aperitif = ["卡帕诺·安提卡配方","仙山露红味美思","杜凌红味美思","杜凌干味美思","洛里帕缇干味美思","杜凌白味美思","园林白味美思","马天尼白威末酒","博纳尔龙胆根奎宁酒","好奇美国佬白味美思","利莱白利口酒","利莱桃红利口酒","君度","柑曼怡","吉发得西柚利口酒","克利尔溪覆盆子利口酒","加布里埃尔·布迪耶第戎黑加仑利口酒","吉发得草莓利口酒","吉发得鲁西荣杏子白兰地","玛斯尼桃子利口酒","克利尔溪梨子利口酒","马蒂尔德梨子利口酒","路萨朵樱桃利口酒","玛拉斯卡樱桃利口酒","圣哲曼","吉发得紫罗兰利口酒","吉发得白薄荷利口酒","光阴似箭绿薄荷利口酒","法国廊酒","查若加利福尼亚芦荟利口酒","查特酒","加里安奴","金女巫","吉发得白可可利口酒","吉发得马达加斯加香草利口酒","洛丽塔咖啡利口酒","加里安奴特浓"];
+
+    const longDrink = ["可乐","气泡水","姜汁汽水","汤力水","橙汁","桃汁","苹果汁","西打酒","起泡酒"];
+
+    const bitters = ["芳香苦精","柑橘苦精","开胃苦精","新鲜薄荷","柠檬角","苦艾酒"];
+
+    const proteins = ["椰奶","牛奶","奶油","蛋白","蛋黄","杏仁奶","巧克力奶","酸奶","豆奶"];
+
+    const decoration = ["柠檬皮卷","橙皮卷","青柠皮卷","肉桂皮","橄榄","樱桃","洋葱","梅干","薄荷叶","undefined","爱","和平","神圣","机器人"];
+    
+    const methods = ["将所有原料加冰摇匀。","将所有原料混合搅拌。","将原材料发射进入太空。","将原材料放入液压机。","携带原材料绕场一周并向运动员展示。","安抚原材料的情绪并摇匀。","挑起原材料间的争斗。","鼓励原材料友好相处。","给每样原材料讲一个不同的笑话。","边使用大悲咒净化原材料边搅拌。","钝角。","恐吓原材料。","故障。"]
+
+    function randomInt(maxExclusive) {
+        return Math.floor(Math.random() * (maxExclusive));
+    }
+
+    function randomString(length, chars) {
+        var result = '';
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
+
+    function randomChoice(collection) {
+        return collection[randomInt(collection.length)];
+    }
+
+    function genOrder() {
+        const genMethod = randomInt(3);
+        switch (genMethod) {
+            case 0:
+                return Math.random().toString(36).slice(-8);
+            case 1:
+                return randomString(16, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            case 2:
+                return randomString(2, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(8, '0123456789');
+            default:
+                return new Date();
+        }
+    }
+
+    function genPerson() {
+        let genMethod = randomInt(4);
+        let seed = randomInt(10);
+        if (genMethod % 3 == 0) {
+            return seed + 1;
+        }
+        return randomChoice(personType);
+    }
+
+    function genRecipeName() {
+        return randomChoice(name_part1) + randomChoice(name_part2);
+    }
+
+    function getSpirits() {
+        const spiritType = randomInt(6);
+        switch (spiritType) {
+            case 0:
+                return randomChoice(whisky);
+            case 1:
+                return randomChoice(vodka);
+            case 2:
+                return randomChoice(brandy);
+            case 3:
+                return randomChoice(rum);
+            case 4: 
+                return randomChoice(tequila);
+            case 5:
+                return randomChoice(gin);
+            default:
+                break;
+        }
+    }
+
+    function genRecipe() {
+        recipe = {
+            ingredients: [],
+            amounts: []
+        }
+
+        recipe.ingredients.push(getSpirits());
+        recipe.amounts.push("酒");
+        if (Math.random() > 0.95) {
+            recipe.ingredients.push(getSpirits());
+            recipe.amounts.push("酒");
+        }
+
+        const pattern = randomInt(7);
+        switch (pattern) {
+            case 0: // protein
+                recipe.ingredients.push(randomChoice(proteins));
+                recipe.amounts.push("蛋白质");
+                if ((Math.random() > 0.98) && (recipe.ingredients.length < 3)) {
+                    recipe.ingredients.push(randomChoice(proteins));
+                    recipe.amounts.push("蛋白质");
+                }
+                break;
+
+            case 1: // it's high ball
+                recipe.ingredients.push(randomChoice(longDrink));
+                recipe.amounts.push("长饮");
+                break;
+                
+            default:
+                break;
+        }
+
+        // bitter
+        if (pattern == 0) {
+            if (Math.random() > 0.9) {
+                recipe.ingredients.push(randomChoice(bitters));
+                recipe.amounts.push("苦精");
+            }
+        } else {
+            if ((Math.random() > 0.96) && (recipe.ingredients.length < 4)) {
+                recipe.ingredients.push(randomChoice(bitters));
+                recipe.amounts.push("苦精");
+            }
+        }
+    
+        let skip = randomInt(3);
+
+        if (skip != 0) { // sweet
+            recipe.ingredients.push(randomChoice(sweets));
+            recipe.amounts.push("糖");
+            if ((Math.random() > 0.92) && (recipe.ingredients.length < 4)) {
+                recipe.ingredients.push(randomChoice(sweets));
+                recipe.amounts.push("糖");
+            }
+        }
+        
+        if (skip != 1) { // sour
+            if (pattern == 0) {
+                if (Math.random() > 0.95) {
+                    recipe.ingredients.push(randomChoice(sour));
+                    recipe.amounts.push("酸味");
+                }
+            } else {
+                recipe.ingredients.push(randomChoice(sour));
+                recipe.amounts.push("酸味");
+            }
+        }
+       
+    
+        if (skip != 2) { // aperitif
+            recipe.ingredients.push(randomChoice(aperitif));
+            recipe.amounts.push("利口酒");
+            if ((Math.random() > 0.8) && (recipe.ingredients.length < 5)) {
+                recipe.ingredients.push(randomChoice(aperitif));
+                recipe.amounts.push("利口酒");
+            }
+        }
+
+        return recipe;
+    }
+
+
+    document.getElementById("current-time").innerHTML = "下单时间：" + today.toISOString();
+    document.getElementById("order-num").innerHTML="单号：" + genOrder();
+    document.getElementById("person-count").innerHTML="人数：" + genPerson();
+    document.getElementById("cashier").innerHTML="收银员：" + randomChoice(cashierType);
+    document.getElementById("membership").innerHTML="积分卡号：" + randomString(16, '0123456789-');
+
+    document.getElementById("recipe-name").innerHTML=genRecipeName();
+
+    let myRecipe = genRecipe();
+    let ingredientsHTML = "伟大的创造力";
+    let amountHTML = "大量";
+
+    for (var i = 0; i < myRecipe.ingredients.length; i++) {
+        ingredientsHTML += "<p>" + myRecipe.ingredients[i] + "</p>";
+        amountHTML += "<p>" + myRecipe.amounts[i] + "</p>";
+    }
+
+    document.getElementById("ingredients").innerHTML = ingredientsHTML;
+    document.getElementById("amount").innerHTML = amountHTML;
+
+    document.getElementById("method").innerHTML = randomChoice(methods) + "并使用" + randomChoice(decoration) + "进行装饰。";
+
+</script>
+</html>
